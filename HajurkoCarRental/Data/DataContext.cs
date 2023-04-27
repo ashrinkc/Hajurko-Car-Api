@@ -13,6 +13,7 @@ namespace HajurkoCarRental.Data
         public DbSet<Offer> Offers { get; set; }
         public DbSet<CarRental> CarRental { get; set; }
         public DbSet<CarRentalRequest> CarRentalRequest { get; set; }
+        public DbSet<CarDamage> CarDamages { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<CarRental>()

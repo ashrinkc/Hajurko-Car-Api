@@ -40,6 +40,48 @@ namespace HajurkoCarRental.Controllers
             await _context.SaveChangesAsync();
             return Ok("Password changed successfully");
         }
+
+        //Get customers who have frequently rented cars
+        [HttpGet("frequentrenters")]
+        public async Task<IActionResult> GetFrequentRenters()
+        {
+            var customers = await _context.CarRentalRequest
+                .Include(r => r.User)
+                .Where(r => r.IsApproved)
+                .GroupBy(r => r.UserId)
+                .OrderByDescending(g => g.Count())
+                .Select(g => new
+                {
+                    UserId = g.Key,
+                    FirstName = g.First().User.FirstName,
+                    LastName = g.First().User.LastName,
+                    RentalCount = g.Count()
+                }).ToListAsync();
+
+            return Ok(customers);
+        }
+
+        //Get inactive customers
+        [HttpGet("inactivecustomers")]
+        public async Task<IActionResult> GetInactiveCustomers()
+        {
+            var cutOffDate = DateTime.Today.AddMonths(-3);
+
+            var customers = await _context.CarRentalRequest
+                .Include(r => r.User)
+                .Where(r => r.IsApproved && r.RentalEnd < cutOffDate)
+                .GroupBy(r => r.UserId)
+                .OrderByDescending(g => g.Count())
+                .Select(g => new
+                {
+                    UserId = g.Key,
+                    FirstName = g.First().User.FirstName,
+                    LastName = g.First().User.LastName,
+                    RentalCount = g.Count()
+                }).ToListAsync();
+
+            return Ok(customers);
+        }
        
     }
 }
