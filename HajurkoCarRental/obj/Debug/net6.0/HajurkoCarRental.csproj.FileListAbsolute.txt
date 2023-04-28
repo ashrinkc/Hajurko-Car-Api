@@ -81,3 +81,4 @@ D:\DOTNET\HajurkoCarRental\HajurkoCarRental\obj\Debug\net6.0\HajurkoCarRental.pd
 D:\DOTNET\HajurkoCarRental\HajurkoCarRental\obj\Debug\net6.0\HajurkoCarRental.genruntimeconfig.cache
 D:\DOTNET\HajurkoCarRental\HajurkoCarRental\obj\Debug\net6.0\ref\HajurkoCarRental.dll
 D:\DOTNET\HajurkoCarRental\HajurkoCarRental\bin\Debug\net6.0\BCrypt.Net-Core.dll
+D:\DOTNET\HajurkoCarRental\HajurkoCarRental\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

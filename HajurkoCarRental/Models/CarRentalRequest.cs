@@ -7,8 +7,9 @@
         public int UserId { get; set; }
         public DateTime RentalStart { get;set; }
         public DateTime RentalEnd { get;set; }
-        public bool IsApproved { get; set; } 
-
+        public bool IsApproved { get; set; }
+        public string Status { get; set; } = "Pending";
+        public bool Cancelled { get; set; }
         public Car Car { get; set; }
         public AppUser User { get; set; }
 

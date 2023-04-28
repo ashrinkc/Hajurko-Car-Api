@@ -28,6 +28,10 @@ namespace HajurkoCarRental.Data
                 .HasForeignKey(c => c.CustomerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Car>()
+                .Property(c => c.DailyRentalFee)
+                .HasColumnType("decimal(18,4)");
+
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -1,10 +1,11 @@
 ﻿using HajurkoCarRental.Data;
 using HajurkoCarRental.Dto;
 using HajurkoCarRental.Models;
+using HajurkoCarRental.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.Extensions.Configuration;
 namespace HajurkoCarRental.Controllers
 {
     [Route("api/[controller]")]
@@ -36,38 +37,24 @@ namespace HajurkoCarRental.Controllers
             var user = new AppUser
             {
                 Email = model.Email,
-                FirstName = model.FirstName,
-                LastName = model.LastName,
+                FullName = model.FullName,
                 UserType = model.UserType,
+                Address = model.Address,
+                Phone = model.Phone,
             };
 
             //hash the password before saving it
             var passwordHasher = new PasswordHasher<AppUser>();
             user.PasswordHash = passwordHasher.HashPassword(user, model.Password);
 
+            // Upload document for customer registration
+            if (model.Document != null)
+            {
+                // Handle document upload
+            }
+
             _context.AppUsers.Add(user);
             await _context.SaveChangesAsync();
-            //add user to appropriate role
-            //switch (model.UserType)
-            //{
-            //    case UserType.Admin:
-            //        user.Role = ""
-            //        break;
-            //    case UserType.Staff:
-            //        await _userManager.AddToRoleAsync(user, "Staff");
-            //        break;
-            //    case UserType.Customer:
-            //        await _userManager.AddToRoleAsync(user, "Customer");
-            //        break;
-            //    default:
-            //        break;
-            //}
-
-            // Upload document for customer registration
-            //if (model.UserType == UserType.Customer && model.Document != null)
-            //{
-            //    // Handle document upload
-            //}
 
             return Ok("Registered Successfully");
         }
@@ -90,13 +77,14 @@ namespace HajurkoCarRental.Controllers
                 return Unauthorized("Invalid email or password");
             }
 
+           // var tokenService = new Token(_config);
+           // var token = tokenService.GenerateToken(user);
             return Ok(new
             {
                 id = user.Id,
                 email = user.Email,
                 userType = user.UserType,
-                firstName = user.FirstName,
-                lastName = user.LastName,
+                fullName = user.FullName,
             });
         }
     }

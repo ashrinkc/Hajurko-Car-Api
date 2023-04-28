@@ -31,6 +31,9 @@ namespace HajurkoCarRental.Controllers
                 Description = car.Description,
                 IsAvailable = car.IsAvailable,
                 DailyRentalFee = car.DailyRentalFee,
+                Rating = car.Rating,
+                Color = car.Color,
+                RegNumber = car.RegNumber,
             });
             return Ok(carDtos);
         }
@@ -54,6 +57,9 @@ namespace HajurkoCarRental.Controllers
                 Description = car.Description,
                 IsAvailable = car.IsAvailable,
                 DailyRentalFee = car.DailyRentalFee,
+                Rating = car.Rating,
+                Color = car.Color,
+                RegNumber = car.RegNumber,
             };
             return Ok(carDto);
         }
@@ -73,7 +79,10 @@ namespace HajurkoCarRental.Controllers
                 Year = carDto.Year,
                 Description = carDto.Description,
                 DailyRentalFee = carDto.DailyRentalFee,
-                IsAvailable = carDto.IsAvailable
+                IsAvailable = carDto.IsAvailable,
+                Rating = carDto.Rating,
+                Color = carDto.Color,
+                RegNumber = carDto.RegNumber,
             };
 
             _context.Cars.Add(car);
@@ -81,6 +90,7 @@ namespace HajurkoCarRental.Controllers
             return Ok("Car added successfully");
         }
 
+        //Remove car
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCar(int id)
         {
@@ -95,5 +105,50 @@ namespace HajurkoCarRental.Controllers
 
             return Ok("Car removes successfully");
         }
+
+        //Get rented cars
+        [HttpGet("rented")]
+        public async Task<IActionResult> GetRentedCars()
+        {
+            var cars = await _context.Cars
+                .Where(c => c.IsAvailable == false)
+                .ToListAsync();
+
+            return Ok(cars);
+        }
+
+        //Get available cars
+        [HttpGet("availableCars")]
+        public async Task<IActionResult> GetAvailableCars()
+        {
+            var cars = await _context.Cars
+                .Where(c => c.IsAvailable == true)
+                .ToListAsync();
+
+            return Ok(cars);   
+        }
+
+        //Get frequently rented cars
+        [HttpGet("frequentlyRented")]
+        public async Task<IActionResult> GetFrequentlyRentedCars()
+        {
+            var cars = await _context.Cars
+                .OrderByDescending(c => c.RentCount)
+                .Take(10)
+                .ToListAsync();
+
+            return Ok(cars);
+        }
+
+        //Get cars that have not been rented
+        public async Task<IActionResult> GetNotRentedCars()
+        {
+            var cars = await _context.Cars
+                .Where(c => c.RentCount == 0)
+                .ToListAsync();
+
+            return Ok(cars);
+        }
+
     }
 }

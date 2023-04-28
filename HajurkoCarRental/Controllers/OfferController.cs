@@ -33,8 +33,10 @@ namespace HajurkoCarRental.Controllers
             {
                 CarId = offerdto.CarId,
                 DiscountPercentage = offerdto.DiscountPercentage,
+                Title = offerdto.Title,
+                Description = offerdto.Description,
                 StartDate = offerdto.StartDate,
-                EndDate = offerdto.EndDate
+                EndDate = offerdto.EndDate,
             };
 
             _context.Offers.Add(offer);
@@ -66,6 +68,8 @@ namespace HajurkoCarRental.Controllers
                 CarBrand = offer.Car.Brand,
                 CarModel = offer.Car.Model,
                 DiscountPercentage = offer.DiscountPercentage,
+                Title=offer.Title,
+                Description=offer.Description,
                 StartDate = offer.StartDate,
                 EndDate = offer.EndDate
             };
@@ -93,6 +97,8 @@ namespace HajurkoCarRental.Controllers
                 CarBrand = offer.Car.Brand,
                 CarModel = offer.Car.Model,
                 DiscountPercentage = offer.DiscountPercentage,
+                Title = offer.Title,
+                Description = offer.Description,
                 StartDate = offer.StartDate,
                 EndDate = offer.EndDate
             }).ToList();

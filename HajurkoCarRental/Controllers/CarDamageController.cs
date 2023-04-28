@@ -2,6 +2,7 @@
 using HajurkoCarRental.Dto;
 using HajurkoCarRental.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HajurkoCarRental.Controllers
 {
@@ -20,15 +21,15 @@ namespace HajurkoCarRental.Controllers
         public async Task<IActionResult> CreateCarDamageRequest([FromBody] CarDamageRequestDto damageDto)
         {
             //check if the car rental request exists and is approved
-            var carRentalRequest = await _context.CarRentalRequest.FindAsync(damageDto.CarRentalRequestId);
+            var carRental = await _context.CarRental.FindAsync(damageDto.CarRentalId);
 
-            if(carRentalRequest == null || !carRentalRequest.IsApproved)
+            if(carRental == null)
             {
                 return BadRequest("Invalid request id or request not approved");
             }
             var carDamage = new CarDamage
-            {
-                CarRentalRequestId = damageDto.CarRentalRequestId,
+            { 
+                CarRentalId = damageDto.CarRentalId,
                 Description = damageDto.Description,
                 IsPaid = false
             };
@@ -38,5 +39,21 @@ namespace HajurkoCarRental.Controllers
 
             return Ok("Car damage request successfully created");
         }
+
+        //Get damaged car info
+        [HttpGet]
+        public async Task<IActionResult> GetCarDamage()
+        {
+            var carDamage = await _context.CarDamages.Select(c => new CarDamageDto
+            {
+                CarBrand = c.CarRental.Car.Brand,
+                CarModel = c.CarRental.Car.Model,
+                Customer = c.CarRental.Customer.FullName,
+                Description = c.Description,
+            }).ToListAsync();
+
+            return Ok(carDamage);
+        }
+
     }
 }

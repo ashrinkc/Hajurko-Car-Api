@@ -2,7 +2,7 @@
 {
     public class CarDamageRequestDto
     {
-        public int CarRentalRequestId { get; set; }
+        public int CarRentalId { get; set; }
         public string Description { get; set; }
     }
 }

@@ -53,8 +53,7 @@ namespace HajurkoCarRental.Controllers
                 .Select(g => new
                 {
                     UserId = g.Key,
-                    FirstName = g.First().User.FirstName,
-                    LastName = g.First().User.LastName,
+                    FullName = g.First().User.FullName,
                     RentalCount = g.Count()
                 }).ToListAsync();
 
@@ -75,8 +74,7 @@ namespace HajurkoCarRental.Controllers
                 .Select(g => new
                 {
                     UserId = g.Key,
-                    FirstName = g.First().User.FirstName,
-                    LastName = g.First().User.LastName,
+                    FullName = g.First().User.FullName,
                     RentalCount = g.Count()
                 }).ToListAsync();
 
