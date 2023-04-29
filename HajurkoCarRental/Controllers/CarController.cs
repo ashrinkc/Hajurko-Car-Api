@@ -83,6 +83,7 @@ namespace HajurkoCarRental.Controllers
                 Rating = carDto.Rating,
                 Color = carDto.Color,
                 RegNumber = carDto.RegNumber,
+                RentCount = 0
             };
 
             _context.Cars.Add(car);
@@ -141,6 +142,7 @@ namespace HajurkoCarRental.Controllers
         }
 
         //Get cars that have not been rented
+        [HttpGet("nonRented")]
         public async Task<IActionResult> GetNotRentedCars()
         {
             var cars = await _context.Cars
@@ -148,6 +150,59 @@ namespace HajurkoCarRental.Controllers
                 .ToListAsync();
 
             return Ok(cars);
+        }
+
+        //Update car info
+        [HttpPut("updateCar/{id}")]
+        public async Task<IActionResult> UpdateCar(int id, UpdateCarDto updatedCar)
+        {
+            var car = await _context.Cars.FindAsync(id);
+
+            if (car == null)
+            {
+                return NotFound();
+            }
+
+            //Update the car with their fields
+            if (updatedCar.Brand != null)
+            {
+                car.Brand = updatedCar.Brand;
+            }
+
+            if (updatedCar.Model != null)
+            {
+                car.Model = updatedCar.Model;
+            }
+
+            if (updatedCar.Year != null)
+            {
+                car.Year = updatedCar.Year;
+            }
+
+            if (updatedCar.Description != null)
+            {
+                car.Description = updatedCar.Description;
+            }
+
+            if (updatedCar.Rating != null)
+            {
+                car.Rating = updatedCar.Rating;
+            }
+
+            if (updatedCar.Color != null)
+            {
+                car.Color = updatedCar.Color;
+            }
+
+            if (updatedCar.RegNumber != null)
+            {
+                car.RegNumber = updatedCar.RegNumber;
+            }
+
+            _context.Cars.Update(car);
+            await _context.SaveChangesAsync();
+
+            return Ok(car);
         }
 
     }

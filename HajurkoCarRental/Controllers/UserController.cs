@@ -1,4 +1,5 @@
 ﻿using HajurkoCarRental.Data;
+using HajurkoCarRental.Dto;
 using HajurkoCarRental.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +40,53 @@ namespace HajurkoCarRental.Controllers
             _context.Entry(user).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return Ok("Password changed successfully");
+        }
+
+        //Update user
+        [HttpPut("updateUser/{userId}")]
+        public async Task<IActionResult> UpdateUser(int userId,UpdateUserDto updatedUser )
+        {
+            var user = await _context.AppUsers.FindAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            //Update the user with their fields
+            if (user.FullName != null)
+            {
+                user.FullName = updatedUser.FullName;
+            }
+
+            if (user.UserType != null)
+            {
+                user.UserType = updatedUser.UserType;
+            }
+
+            if (user.Phone != null)
+            {
+                user.Phone = updatedUser.Phone;
+            }
+
+            if (user.Address != null)
+            {
+                user.Address = updatedUser.Address;
+            }
+
+            if (user.IsRegular != null)
+            {
+                user.IsRegular = updatedUser.IsRegular;
+            }
+
+            if(user.Document != null)
+            {
+                user.Document = updatedUser.Document;
+            }
+
+            _context.AppUsers.Update(user);
+            await _context.SaveChangesAsync();
+            return Ok(user);
         }
 
         //Get customers who have frequently rented cars

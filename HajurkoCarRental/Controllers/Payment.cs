@@ -23,17 +23,17 @@ namespace HajurkoCarRental.Controllers
             var carDamage = await _context.CarDamages.FindAsync(damageId);
             carDamage.RepairCost = payment.RepairCost;
             carDamage.TotalAmountPaid = payment.TotalAmountPaid;
-            var paymentBill = new PaymentDto
-            {
-                RepairCost = payment.RepairCost,
-                TotalAmountPaid = payment.TotalAmountPaid,
-                CarBrand = carDamage.CarRental.Car.Brand,
-                CarModel = carDamage.CarRental.Car.Model,
-                Customer = carDamage.CarRental.Customer.FullName,
-            };
+            //var paymentBill = new 
+            //{
+            //    RepairCost = payment.RepairCost,
+            //    TotalAmountPaid = payment.TotalAmountPaid,
+            //    CarBrand = carDamage.CarRental.Car.Brand,
+            //    CarModel = carDamage.CarRental.Car.Model,
+            //    Customer = carDamage.CarRental.Customer.FullName,
+            //};
             _context.CarDamages.Update(carDamage);
             await _context.SaveChangesAsync();
-            return Ok(paymentBill);
+            return Ok();
         }
 
         //Get payment bill
@@ -59,10 +59,11 @@ namespace HajurkoCarRental.Controllers
                 {
                     RepairCost = car.RepairCost,
                     TotalAmountPaid = car.TotalAmountPaid,
-                    CarBrand = car.CarRental.Car.Brand,
-                    CarModel = car.CarRental.Car.Model,
-                    Customer = car.CarRental.Customer.FullName,
+                    //CarBrand = car.CarRental.Car.Brand,
+                    //CarModel = car.CarRental.Car.Model,
+                    //Customer = car.CarRental.Customer.FullName,
                 };
+                paymentBills.Add(paymentBill);
             }
             return Ok(paymentBills);
 

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HajurkoCarRental.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230428054852_AddToDb")]
+    [Migration("20230429095912_AddToDb")]
     partial class AddToDb
     {
         /// <inheritdoc />
@@ -48,12 +48,18 @@ namespace HajurkoCarRental.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool?>("IsRegular")
+                        .HasColumnType("bit");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserType")
@@ -77,6 +83,10 @@ namespace HajurkoCarRental.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("DailyRentalFee")
                         .HasColumnType("decimal(18,4)");
 
@@ -95,6 +105,13 @@ namespace HajurkoCarRental.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("RegNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("RentCount")
+                        .HasColumnType("int");
+
                     b.Property<string>("Year")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -112,22 +129,28 @@ namespace HajurkoCarRental.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CarRentalRequestId")
+                    b.Property<int>("CarRentalId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("DateOfDamage")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsPaid")
+                    b.Property<bool?>("IsPaid")
                         .HasColumnType("bit");
 
                     b.Property<decimal?>("RepairCost")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal?>("TotalAmountPaid")
+                        .HasColumnType("decimal(18,2)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CarRentalRequestId");
+                    b.HasIndex("CarRentalId");
 
                     b.ToTable("CarDamages");
                 });
@@ -143,16 +166,16 @@ namespace HajurkoCarRental.Migrations
                     b.Property<int>("CarId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Charge")
+                    b.Property<decimal?>("Charge")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("RentalDate")
+                    b.Property<DateTime?>("RentalDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("RentalEnd")
+                    b.Property<DateTime?>("RentalEnd")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("StaffId")
@@ -177,17 +200,23 @@ namespace HajurkoCarRental.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("Cancelled")
+                        .HasColumnType("bit");
+
                     b.Property<int>("CarId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsApproved")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("RentalEnd")
+                    b.Property<DateTime?>("RentalEnd")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("RentalStart")
+                    b.Property<DateTime?>("RentalStart")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -212,14 +241,22 @@ namespace HajurkoCarRental.Migrations
                     b.Property<int>("CarId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("DiscountPercentage")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("StartDate")
+                    b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -230,13 +267,13 @@ namespace HajurkoCarRental.Migrations
 
             modelBuilder.Entity("HajurkoCarRental.Models.CarDamage", b =>
                 {
-                    b.HasOne("HajurkoCarRental.Models.CarRentalRequest", "CarRentalRequest")
+                    b.HasOne("HajurkoCarRental.Models.CarRental", "CarRental")
                         .WithMany()
-                        .HasForeignKey("CarRentalRequestId")
+                        .HasForeignKey("CarRentalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CarRentalRequest");
+                    b.Navigation("CarRental");
                 });
 
             modelBuilder.Entity("HajurkoCarRental.Models.CarRental", b =>

@@ -23,7 +23,9 @@ namespace HajurkoCarRental.Migrations
                     UserType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Document = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Document = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsRegular = table.Column<bool>(type: "bit", nullable: true),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -42,7 +44,10 @@ namespace HajurkoCarRental.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DailyRentalFee = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     IsAvailable = table.Column<bool>(type: "bit", nullable: false),
-                    Rating = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Rating = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RegNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RentCount = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -55,9 +60,9 @@ namespace HajurkoCarRental.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RentalDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    RentalEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Charge = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    RentalDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    RentalEnd = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Charge = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     CarId = table.Column<int>(type: "int", nullable: false),
                     CustomerId = table.Column<int>(type: "int", nullable: false),
                     StaffId = table.Column<int>(type: "int", nullable: false)
@@ -93,9 +98,11 @@ namespace HajurkoCarRental.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CarId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    RentalStart = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    RentalEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsApproved = table.Column<bool>(type: "bit", nullable: false)
+                    RentalStart = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    RentalEnd = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsApproved = table.Column<bool>(type: "bit", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Cancelled = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -121,9 +128,11 @@ namespace HajurkoCarRental.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CarId = table.Column<int>(type: "int", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DiscountPercentage = table.Column<int>(type: "int", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -142,26 +151,28 @@ namespace HajurkoCarRental.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CarRentalRequestId = table.Column<int>(type: "int", nullable: false),
+                    CarRentalId = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RepairCost = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    IsPaid = table.Column<bool>(type: "bit", nullable: false)
+                    TotalAmountPaid = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    IsPaid = table.Column<bool>(type: "bit", nullable: true),
+                    DateOfDamage = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CarDamages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CarDamages_CarRentalRequest_CarRentalRequestId",
-                        column: x => x.CarRentalRequestId,
-                        principalTable: "CarRentalRequest",
+                        name: "FK_CarDamages_CarRental_CarRentalId",
+                        column: x => x.CarRentalId,
+                        principalTable: "CarRental",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_CarDamages_CarRentalRequestId",
+                name: "IX_CarDamages_CarRentalId",
                 table: "CarDamages",
-                column: "CarRentalRequestId");
+                column: "CarRentalId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CarRental_CarId",
@@ -201,13 +212,13 @@ namespace HajurkoCarRental.Migrations
                 name: "CarDamages");
 
             migrationBuilder.DropTable(
-                name: "CarRental");
+                name: "CarRentalRequest");
 
             migrationBuilder.DropTable(
                 name: "Offers");
 
             migrationBuilder.DropTable(
-                name: "CarRentalRequest");
+                name: "CarRental");
 
             migrationBuilder.DropTable(
                 name: "AppUsers");

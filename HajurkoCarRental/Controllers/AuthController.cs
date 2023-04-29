@@ -17,6 +17,7 @@ namespace HajurkoCarRental.Controllers
         public AuthController(DataContext context)
         {
             _context = context;
+
         }
 
         [HttpPost("register")]
@@ -51,6 +52,7 @@ namespace HajurkoCarRental.Controllers
             if (model.Document != null)
             {
                 // Handle document upload
+                user.Document = model.Document;
             }
 
             _context.AppUsers.Add(user);
@@ -76,9 +78,9 @@ namespace HajurkoCarRental.Controllers
             {
                 return Unauthorized("Invalid email or password");
             }
-
-           // var tokenService = new Token(_config);
-           // var token = tokenService.GenerateToken(user);
+            
+           //var tokenService = new Token(_config);
+           //var token = tokenService.GenerateToken(user);
             return Ok(new
             {
                 id = user.Id,
@@ -87,5 +89,7 @@ namespace HajurkoCarRental.Controllers
                 fullName = user.FullName,
             });
         }
+
+
     }
 }

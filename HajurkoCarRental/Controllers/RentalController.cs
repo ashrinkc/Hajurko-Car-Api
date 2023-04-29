@@ -40,9 +40,12 @@ namespace HajurkoCarRental.Controllers
                 return BadRequest("Citizenship or driving license is mandatory");
             }
 
-            if(damage.IsPaid == false)
+            if (damage != null)
             {
-                return Unauthorized("Damage payment pending");
+                if (damage.IsPaid == false)
+                {
+                    return Unauthorized("Damage payment pending");
+                }
             }
 
             if (!car.IsAvailable)

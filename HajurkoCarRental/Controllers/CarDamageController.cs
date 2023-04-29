@@ -46,6 +46,7 @@ namespace HajurkoCarRental.Controllers
         {
             var carDamage = await _context.CarDamages.Select(c => new CarDamageDto
             {
+                Id = c.Id,
                 CarBrand = c.CarRental.Car.Brand,
                 CarModel = c.CarRental.Car.Model,
                 Customer = c.CarRental.Customer.FullName,
