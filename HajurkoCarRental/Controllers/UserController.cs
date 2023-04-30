@@ -18,6 +18,15 @@ namespace HajurkoCarRental.Controllers
             _context = context;
         }
 
+        //Get all users
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = await _context.AppUsers.ToListAsync();
+            return Ok(users);
+        }
+
+        // Change user password
         [HttpPost("changePassword")]
         public async Task<IActionResult> ChangePassword(int userId,string oldPassword, string newPassword)
         {
@@ -114,20 +123,58 @@ namespace HajurkoCarRental.Controllers
         {
             var cutOffDate = DateTime.Today.AddMonths(-3);
 
-            var customers = await _context.CarRentalRequest
-                .Include(r => r.User)
-                .Where(r => r.IsApproved && r.RentalEnd < cutOffDate)
-                .GroupBy(r => r.UserId)
-                .OrderByDescending(g => g.Count())
+           
+            //var customers = await _context.CarRentalRequest
+            //    .Include(r => r.User)
+            //    .Where(r => r.IsApproved && r.RentalEnd < cutOffDate)
+            //    .GroupBy(r => r.UserId)
+            //    .OrderByDescending(g => g.Count())
+            //    .Select(g => new
+            //    {
+            //        UserId = g.Key,
+            //        FullName = g.First().User.FullName,
+            //        RentalCount = g.Count()
+            //    }).ToListAsync();
+
+            var inactiveuser = await _context.AppUsers
+                .Join(_context.CarRental,
+                u => u.Id, r => r.CustomerId,
+                (u, r) => new { User = u, Rental = r })
+                .Where(ur => ur.Rental.RentalEnd < cutOffDate)
+                .GroupBy(ur => ur.User.Id)
+                .Where(g => g.Count() == 0)
                 .Select(g => new
                 {
                     UserId = g.Key,
-                    FullName = g.First().User.FullName,
-                    RentalCount = g.Count()
+                    FullName = g.First().User.FullName
                 }).ToListAsync();
-
-            return Ok(customers);
+            return Ok(inactiveuser);
         }
-       
+
+
+        //Check if the customer is regular
+        [HttpGet("isRegular/{userId}")]
+        public async Task<IActionResult> CheckRegular(int userId)
+        {
+            //Get the current date and date one month ago
+            var today = DateTime.UtcNow.Date;
+            var lastMonth = today.AddMonths(-1);
+
+            // Query the rental database for any rentals within the last month for the customer
+            var rentals = await _context.CarRental
+                .Where(r => r.RentalDate >= lastMonth && r.CustomerId == userId)
+                .ToListAsync();
+
+            var IsRegular = false;
+            //If the customer has rental whithin the last month they are regular customer
+            if (rentals.Any())
+            {
+                IsRegular = true;
+            }
+
+            return Ok(IsRegular);
+
+        }
+
     }
 }

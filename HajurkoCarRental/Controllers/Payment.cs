@@ -51,16 +51,16 @@ namespace HajurkoCarRental.Controllers
                 return NotFound();
             }
 
-            var paymentBills = new List<PaymentDto>();
+            var paymentBills = new List<dynamic>();
 
             foreach (var car in carDamage)
             {
-                var paymentBill = new PaymentDto
+                var paymentBill = new 
                 {
                     RepairCost = car.RepairCost,
                     TotalAmountPaid = car.TotalAmountPaid,
-                    //CarBrand = car.CarRental.Car.Brand,
-                    //CarModel = car.CarRental.Car.Model,
+                    CarBrand = car.CarRental?.Car?.Brand,
+                    CarModel = car.CarRental?.Car?.Model,
                     //Customer = car.CarRental.Customer.FullName,
                 };
                 paymentBills.Add(paymentBill);

@@ -1,6 +1,7 @@
 ﻿using HajurkoCarRental.Data;
 using HajurkoCarRental.Dto;
 using HajurkoCarRental.Models;
+using HajurkoCarRental.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,7 @@ namespace HajurkoCarRental.Controllers
         {
             _context = context;
         }
+
 
         //Request to rent a car
         [HttpPost]
@@ -35,19 +37,23 @@ namespace HajurkoCarRental.Controllers
 
             var user = await _context.AppUsers.FindAsync(reqDto.UserId);
 
+            //Check if driving license or citizenship of the user is present
             if (user.Document == null)
             {
                 return BadRequest("Citizenship or driving license is mandatory");
             }
 
+            //Check if the user has damaged previous rented cars
             if (damage != null)
             {
+                //check if the user has not paid for the damaged car before renting another car
                 if (damage.IsPaid == false)
                 {
                     return Unauthorized("Damage payment pending");
                 }
             }
 
+            //Check if the car is available
             if (!car.IsAvailable)
             {
                 return NotFound("The requested car is not currently available");
@@ -78,7 +84,9 @@ namespace HajurkoCarRental.Controllers
         [HttpPost("request/authorize/{reqId}")]
         public async Task<IActionResult> ValidateRequest(int reqId, [FromBody] bool status,int staffId)
         {
+            //Find the request
             var request = await _context.CarRentalRequest.FindAsync(reqId);
+
             if(request == null)
             {
                 return NotFound();
@@ -92,12 +100,17 @@ namespace HajurkoCarRental.Controllers
             }
 
             //To check if the user exists
-            var userExists = await _context.AppUsers.AnyAsync(u => u.Id == request.UserId);
-
+            var userExists = await _context.AppUsers.FirstOrDefaultAsync(u => u.Id == request.UserId);
+            if (userExists == null)
+            {
+                return BadRequest("No such user found");
+            }
             if(status == true)
             {
                 request.IsApproved = true;
                 request.Status = "Approved";
+                var email = new EmailSenderService();
+                await email.SendEmailAsync(userExists.Email,"Rental Request Status","Your request to rent car has benn approved");
                 var car = await _context.Cars.FindAsync(request.CarId);
                 if( car != null)
                 {
@@ -201,5 +214,6 @@ namespace HajurkoCarRental.Controllers
             }
             return Ok(history);
         }
+
     }
 }

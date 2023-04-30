@@ -34,8 +34,8 @@ namespace HajurkoCarRental.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Document")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("Document")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -80,10 +80,6 @@ namespace HajurkoCarRental.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Color")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<decimal>("DailyRentalFee")
                         .HasColumnType("decimal(18,4)");
 
@@ -91,10 +87,32 @@ namespace HajurkoCarRental.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Engine")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Fuel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Image")
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Mileage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Model")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Offer")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Power")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -108,6 +126,14 @@ namespace HajurkoCarRental.Migrations
 
                     b.Property<int?>("RentCount")
                         .HasColumnType("int");
+
+                    b.Property<string>("Seating")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Torque")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Year")
                         .IsRequired()
@@ -137,6 +163,9 @@ namespace HajurkoCarRental.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRepaired")
                         .HasColumnType("bit");
 
                     b.Property<decimal?>("RepairCost")
@@ -244,12 +273,6 @@ namespace HajurkoCarRental.Migrations
 
                     b.Property<int>("DiscountPercentage")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
                         .IsRequired()

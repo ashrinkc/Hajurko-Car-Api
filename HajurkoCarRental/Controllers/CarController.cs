@@ -21,7 +21,7 @@ namespace HajurkoCarRental.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CarDto>>> GetCars()
         {
-            var cars = await _context.Cars.ToListAsync();
+            var cars = await _context.Cars.Include(c => c.Offers).ToListAsync();
             var carDtos = cars.Select(car => new CarDto
             {
                 Id = car.Id,
@@ -32,8 +32,14 @@ namespace HajurkoCarRental.Controllers
                 IsAvailable = car.IsAvailable,
                 DailyRentalFee = car.DailyRentalFee,
                 Rating = car.Rating,
-                Color = car.Color,
                 RegNumber = car.RegNumber,
+                Engine = car.Engine,
+                Mileage = car.Mileage,
+                Seating = car.Seating,
+                Fuel = car.Fuel,
+                Power = car.Power,
+                Torque = car.Torque,
+                Offer = car.Offer
             });
             return Ok(carDtos);
         }
@@ -58,8 +64,14 @@ namespace HajurkoCarRental.Controllers
                 IsAvailable = car.IsAvailable,
                 DailyRentalFee = car.DailyRentalFee,
                 Rating = car.Rating,
-                Color = car.Color,
                 RegNumber = car.RegNumber,
+                Engine = car.Engine,
+                Mileage = car.Mileage,
+                Seating = car.Seating,
+                Fuel = car.Fuel,
+                Power = car.Power,
+                Torque = car.Torque,
+                Offer = car.Offer
             };
             return Ok(carDto);
         }
@@ -81,9 +93,15 @@ namespace HajurkoCarRental.Controllers
                 DailyRentalFee = carDto.DailyRentalFee,
                 IsAvailable = carDto.IsAvailable,
                 Rating = carDto.Rating,
-                Color = carDto.Color,
                 RegNumber = carDto.RegNumber,
-                RentCount = 0
+                RentCount = 0,
+                 Engine = carDto.Engine,
+                Mileage = carDto.Mileage,
+                Seating = carDto.Seating,
+                Fuel = carDto.Fuel,
+                Power = carDto.Power,
+                Torque = carDto.Torque,
+                Image = carDto.Image
             };
 
             _context.Cars.Add(car);
@@ -189,9 +207,9 @@ namespace HajurkoCarRental.Controllers
                 car.Rating = updatedCar.Rating;
             }
 
-            if (updatedCar.Color != null)
+            if (updatedCar.Offer != null)
             {
-                car.Color = updatedCar.Color;
+                car.Offer = updatedCar.Offer;
             }
 
             if (updatedCar.RegNumber != null)

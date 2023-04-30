@@ -9,6 +9,7 @@
         public decimal? TotalAmountPaid { get; set; }
         public bool? IsPaid { get; set; }
         public DateTime? DateOfDamage { get; set; }
+        public bool IsRepaired { get; set; } = false;
         public CarRental CarRental { get; set; }
     }
 }

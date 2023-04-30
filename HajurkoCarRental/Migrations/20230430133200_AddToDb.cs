@@ -23,7 +23,7 @@ namespace HajurkoCarRental.Migrations
                     UserType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Document = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Document = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     IsRegular = table.Column<bool>(type: "bit", nullable: true),
                     Role = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -45,8 +45,15 @@ namespace HajurkoCarRental.Migrations
                     DailyRentalFee = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     IsAvailable = table.Column<bool>(type: "bit", nullable: false),
                     Rating = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     RegNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Engine = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Mileage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Seating = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Fuel = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Power = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Torque = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Offer = table.Column<int>(type: "int", nullable: true),
                     RentCount = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -130,9 +137,7 @@ namespace HajurkoCarRental.Migrations
                     CarId = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DiscountPercentage = table.Column<int>(type: "int", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DiscountPercentage = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -156,7 +161,8 @@ namespace HajurkoCarRental.Migrations
                     RepairCost = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     TotalAmountPaid = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     IsPaid = table.Column<bool>(type: "bit", nullable: true),
-                    DateOfDamage = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DateOfDamage = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsRepaired = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

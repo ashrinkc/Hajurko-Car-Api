@@ -44,7 +44,9 @@ namespace HajurkoCarRental.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCarDamage()
         {
-            var carDamage = await _context.CarDamages.Select(c => new CarDamageDto
+            var carDamage = await _context.CarDamages
+                .Where(c => !c.IsRepaired)
+                .Select(c => new CarDamageDto
             {
                 Id = c.Id,
                 CarBrand = c.CarRental.Car.Brand,
@@ -54,6 +56,29 @@ namespace HajurkoCarRental.Controllers
             }).ToListAsync();
 
             return Ok(carDamage);
+        }
+
+        //Repair damaged cars
+        [HttpPost("repair/{id}")]
+        public async Task<IActionResult> RepairDamagedCar(int id)
+        {
+            var carDamage = await _context.CarDamages.FindAsync(id);
+            
+            if(carDamage == null)
+            {
+                return NotFound();
+            }
+
+            carDamage.IsRepaired = true;
+            _context.Update(carDamage);
+
+            //set the corresponding cars isavailable property to true
+            var car = carDamage.CarRental.Car;
+            car.IsAvailable = true;
+            _context.Update(car);
+
+            await _context.SaveChangesAsync();
+            return Ok("Car repaired successfull");
         }
 
     }

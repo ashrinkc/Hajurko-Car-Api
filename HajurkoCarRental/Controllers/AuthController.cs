@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Linq;
+
 namespace HajurkoCarRental.Controllers
 {
     [Route("api/[controller]")]
@@ -52,7 +54,23 @@ namespace HajurkoCarRental.Controllers
             if (model.Document != null)
             {
                 // Handle document upload
+                // Check if file type is pdf or png
+                //var allowedTypes = new[] { ".pdf", ".png" };
+                //var extension = Path.GetExtension(model.Document).ToLower();
+                //if (!allowedTypes.Contains(extension))
+                //{
+                //    return BadRequest("Invalid file type. Please upload a pdf or png file.");
+                //}
+
+                // Check if file size is less than or equal to 1.5MB
+                if (model.Document.Length > 1572864) // 1.5MB in bytes
+                {
+                    return BadRequest("File size should not exceed 1.5MB.");
+                }
+
+                // Handle document upload
                 user.Document = model.Document;
+
             }
 
             _context.AppUsers.Add(user);
@@ -79,14 +97,16 @@ namespace HajurkoCarRental.Controllers
                 return Unauthorized("Invalid email or password");
             }
             
-           //var tokenService = new Token(_config);
-           //var token = tokenService.GenerateToken(user);
-            return Ok(new
+           //Generate token
+           var tokenService = new Token();
+           var token = tokenService.GenerateToken(user);
+            return Ok(new 
             {
                 id = user.Id,
                 email = user.Email,
                 userType = user.UserType,
                 fullName = user.FullName,
+                token = token,
             });
         }
 

@@ -12,7 +12,7 @@ namespace HajurkoCarRental.Services
 
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
-            string fromMail = "email@gmail.com";
+            string fromMail = "ashrinkc3@gmail.com";
             string fromPassword = "ucnweaymjnipddyp";
 
             MailMessage message = new MailMessage();
