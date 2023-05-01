@@ -98,7 +98,7 @@ namespace HajurkoCarRental.Controllers
 
         //To accept or reject incoming car rental request
         [HttpPost("request/authorize/{reqId}")]
-        public async Task<IActionResult> ValidateRequest(int reqId, [FromBody] bool status,int staffId)
+        public async Task<IActionResult> ValidateRequest(int reqId, [FromBody] ValidateRequestDto model)
         {
             //Find the request
             var request = await _context.CarRentalRequest.FindAsync(reqId);
@@ -121,7 +121,7 @@ namespace HajurkoCarRental.Controllers
             {
                 return BadRequest("No such user found");
             }
-            if(status == true)
+            if(model.status == true)
             {
                 request.IsApproved = true;
                 request.Status = "Approved";
@@ -141,12 +141,13 @@ namespace HajurkoCarRental.Controllers
                     RentalEnd = request.RentalEnd,
                     CarId = request.CarId,
                     CustomerId = request.UserId,
-                    StaffId = staffId
+                    Charge = request.Charge,
+                    StaffId = model.staffId
                 };
 
                 _context.CarRental.Add(carRental);
                 
-            }else if(status == false)
+            }else if(model.status == false)
             {
                 request.Status = "Rejected";
                 request.IsApproved=false;
@@ -170,7 +171,11 @@ namespace HajurkoCarRental.Controllers
                 {
                     CarModel = r.Car.Model,
                     CarBrand = r.Car.Brand,
-                    Customer = r.Customer.FullName,
+                    CustomerName = r.Customer.FullName,
+                    CustomerEmail = r.Customer.Email,
+                    StartDate = r.RentalDate,
+                    EndDate = r.RentalEnd,
+                    Charge = r.Charge,
                     Id = r.Id
                 }).ToListAsync();
 
