@@ -9,6 +9,7 @@
         public int CarId { get; set; }
         public int CustomerId { get; set; }
         public int StaffId { get; set; }
+        public bool IsReturned { get; set; } = false;
 
         public Car Car { get; set; }
         public AppUser Customer { get; set; }

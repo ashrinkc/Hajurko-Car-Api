@@ -34,8 +34,8 @@ namespace HajurkoCarRental.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("Document")
-                        .HasColumnType("varbinary(max)");
+                    b.Property<string>("Document")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -95,8 +95,8 @@ namespace HajurkoCarRental.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("Image")
-                        .HasColumnType("varbinary(max)");
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
@@ -198,6 +198,9 @@ namespace HajurkoCarRental.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsReturned")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("RentalDate")
                         .HasColumnType("datetime2");
 
@@ -231,6 +234,9 @@ namespace HajurkoCarRental.Migrations
 
                     b.Property<int>("CarId")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("Charge")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsApproved")
                         .HasColumnType("bit");

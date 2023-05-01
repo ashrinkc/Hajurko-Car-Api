@@ -13,7 +13,7 @@ namespace HajurkoCarRental.Dto
         public bool IsAvailable { get; set; }
         public string Rating { get; set; }
         public string Color { get; set; }
-        public byte[]? Image { get; set; }
+        public string? Image { get; set; }
         public string RegNumber { get; set; }
         public string Engine { get; set; }
         public string Mileage { get; set; }
@@ -22,5 +22,6 @@ namespace HajurkoCarRental.Dto
         public string Power { get; set; }
         public string Torque { get; set; }
         public int? Offer { get; set; }
+        public int? RentCount { get; set; }
     }
 }

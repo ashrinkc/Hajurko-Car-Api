@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HajurkoCarRental.Migrations
 {
     /// <inheritdoc />
-    public partial class AddToDb : Migration
+    public partial class addToDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -23,7 +23,7 @@ namespace HajurkoCarRental.Migrations
                     UserType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Document = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    Document = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsRegular = table.Column<bool>(type: "bit", nullable: true),
                     Role = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -45,7 +45,7 @@ namespace HajurkoCarRental.Migrations
                     DailyRentalFee = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     IsAvailable = table.Column<bool>(type: "bit", nullable: false),
                     Rating = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RegNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Engine = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Mileage = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -72,7 +72,8 @@ namespace HajurkoCarRental.Migrations
                     Charge = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     CarId = table.Column<int>(type: "int", nullable: false),
                     CustomerId = table.Column<int>(type: "int", nullable: false),
-                    StaffId = table.Column<int>(type: "int", nullable: false)
+                    StaffId = table.Column<int>(type: "int", nullable: false),
+                    IsReturned = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -107,6 +108,7 @@ namespace HajurkoCarRental.Migrations
                     UserId = table.Column<int>(type: "int", nullable: false),
                     RentalStart = table.Column<DateTime>(type: "datetime2", nullable: true),
                     RentalEnd = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Charge = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     IsApproved = table.Column<bool>(type: "bit", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Cancelled = table.Column<bool>(type: "bit", nullable: false)

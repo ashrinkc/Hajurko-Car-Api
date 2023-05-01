@@ -39,7 +39,9 @@ namespace HajurkoCarRental.Controllers
                 Fuel = car.Fuel,
                 Power = car.Power,
                 Torque = car.Torque,
-                Offer = car.Offer
+                Offer = car.Offer,
+                Image = car.Image,
+                RentCount = car.RentCount
             });
             return Ok(carDtos);
         }
@@ -71,7 +73,8 @@ namespace HajurkoCarRental.Controllers
                 Fuel = car.Fuel,
                 Power = car.Power,
                 Torque = car.Torque,
-                Offer = car.Offer
+                Offer = car.Offer,
+                Image = car.Image,
             };
             return Ok(carDto);
         }
@@ -80,10 +83,12 @@ namespace HajurkoCarRental.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCar([FromBody] CarDto carDto)
         {
+ 
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            
             var car = new Car
             {
                 Brand = carDto.Brand,
@@ -100,10 +105,23 @@ namespace HajurkoCarRental.Controllers
                 Seating = carDto.Seating,
                 Fuel = carDto.Fuel,
                 Power = carDto.Power,
-                Torque = carDto.Torque,
-                Image = carDto.Image
+                Torque = carDto.Torque
             };
 
+            if (carDto.Image != null)
+            {
+               
+                // Handle document upload
+                // Check if file size is less than or equal to 1.5MB
+                if (carDto.Image.Length > 1572864) // 1.5MB in bytes
+                {
+                    return BadRequest("File size should not exceed 1.5MB.");
+                }
+                // Handle document upload
+                car.Image = carDto.Image;
+                
+
+            }
             _context.Cars.Add(car);
             await _context.SaveChangesAsync();
             return Ok("Car added successfully");
@@ -125,9 +143,9 @@ namespace HajurkoCarRental.Controllers
             return Ok("Car removes successfully");
         }
 
-        //Get rented cars
+        //Get unavilable cars
         [HttpGet("rented")]
-        public async Task<IActionResult> GetRentedCars()
+        public async Task<IActionResult> GetUnavilableCars()
         {
             var cars = await _context.Cars
                 .Where(c => c.IsAvailable == false)

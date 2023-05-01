@@ -64,7 +64,8 @@ namespace HajurkoCarRental.Controllers
                 CarId = reqDto.CarId,
                 UserId = reqDto.UserId,
                 RentalStart = reqDto.RentalStart,
-                RentalEnd = reqDto.RentalEnd
+                RentalEnd = reqDto.RentalEnd,
+                Charge = reqDto.Charge
             };
 
             _context.CarRentalRequest.Add(request);
@@ -76,7 +77,22 @@ namespace HajurkoCarRental.Controllers
         [HttpGet]
         public async Task<IActionResult> GetRentalRequest()
         {
-            var request = await _context.CarRentalRequest.Where(r => !r.Cancelled).ToListAsync();
+            var request = await _context.CarRentalRequest.Where(r => !r.Cancelled && r.Status == "Pending")
+                .Include(r => r.Car)
+                .Include(r => r.User)
+                .Select(r => new
+                {
+                    Id = r.Id,
+                    StartDate = r.RentalStart,
+                    EndDate = r.RentalEnd,
+                    Status = r.Status,
+                    CarBrand = r.Car.Brand,
+                    CarModel = r.Car.Model,
+                    Charge = r.Charge,
+                    Username = r.User.FullName,
+                    Email = r.User.Email
+                })
+                .ToListAsync();
             return Ok(request);
         }
 
@@ -134,6 +150,8 @@ namespace HajurkoCarRental.Controllers
             {
                 request.Status = "Rejected";
                 request.IsApproved=false;
+                var email = new EmailSenderService();
+                await email.SendEmailAsync(userExists.Email, "Rental Request Status", "Your request to rent car has benn rejected");
             }
 
             await _context.SaveChangesAsync();
@@ -141,9 +159,27 @@ namespace HajurkoCarRental.Controllers
             return Ok("Request status updated");
         }
 
+        //Get all rented cars
+        [HttpGet("rented")]
+        public async Task<IActionResult> GetRentedCars()
+        {
+            var cars = await _context.CarRental.Where(r => !r.IsReturned)
+                .Include(r => r.Car)
+                .Include(r => r.Customer)
+                .Select(r => new
+                {
+                    CarModel = r.Car.Model,
+                    CarBrand = r.Car.Brand,
+                    Customer = r.Customer.FullName,
+                    Id = r.Id
+                }).ToListAsync();
+
+            return Ok(cars); 
+        }
+
         //Return rented car
         [HttpPost("return/{id}")]
-        public async Task<IActionResult> ReturnCar(int id, [FromBody] DateTime returnDate)
+        public async Task<IActionResult> ReturnCar(int id, [FromBody] DateTime? returnDate)
         {
             var carRental = await _context.CarRental.FindAsync(id);
 
@@ -153,6 +189,7 @@ namespace HajurkoCarRental.Controllers
             }
 
             carRental.RentalEnd = returnDate;
+            carRental.IsReturned = true;
             _context.CarRental.Update(carRental);
             await _context.SaveChangesAsync();
 

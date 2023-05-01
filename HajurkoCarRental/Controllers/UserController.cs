@@ -26,6 +26,14 @@ namespace HajurkoCarRental.Controllers
             return Ok(users);
         }
 
+        //get user data
+        [HttpGet("indiUser/{id}")]
+        public async Task<IActionResult> GetIndiUser(int id)
+        {
+            var user = await _context.AppUsers.FindAsync(id);
+            return Ok(user);
+        }
+
         // Change user password
         [HttpPost("changePassword")]
         public async Task<IActionResult> ChangePassword(int userId,string oldPassword, string newPassword)
@@ -63,32 +71,32 @@ namespace HajurkoCarRental.Controllers
             }
 
             //Update the user with their fields
-            if (user.FullName != null)
-            {
-                user.FullName = updatedUser.FullName;
-            }
+            //if (user.FullName != null)
+            //{
+            //    user.FullName = updatedUser.FullName;
+            //}
 
-            if (user.UserType != null)
+            if (updatedUser.UserType != null)
             {
                 user.UserType = updatedUser.UserType;
             }
 
-            if (user.Phone != null)
+            if (updatedUser.Phone != null)
             {
                 user.Phone = updatedUser.Phone;
             }
 
-            if (user.Address != null)
+            if (updatedUser.Address != null)
             {
                 user.Address = updatedUser.Address;
             }
 
-            if (user.IsRegular != null)
+            if (updatedUser.IsRegular != null)
             {
-                user.IsRegular = updatedUser.IsRegular;
+               user.IsRegular = updatedUser.IsRegular;
             }
 
-            if(user.Document != null)
+            if(updatedUser.Document != null)
             {
                 user.Document = updatedUser.Document;
             }

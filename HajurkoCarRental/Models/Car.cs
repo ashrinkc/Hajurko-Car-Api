@@ -10,7 +10,7 @@
         public decimal DailyRentalFee { get; set; }
         public bool IsAvailable { get; set; }
         public string Rating { get; set; }
-        public byte[]? Image { get; set; }
+        public string? Image { get; set; }
         public string RegNumber { get; set; }
         public string Engine { get; set; }
         public string Mileage { get; set; }

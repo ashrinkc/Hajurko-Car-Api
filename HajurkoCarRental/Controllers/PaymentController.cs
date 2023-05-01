@@ -7,11 +7,11 @@ namespace HajurkoCarRental.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class Payment : ControllerBase
+    public class PaymentController : ControllerBase
     {
         private readonly DataContext _context;
 
-        public Payment(DataContext context)
+        public PaymentController(DataContext context)
         {
             _context = context;
         }

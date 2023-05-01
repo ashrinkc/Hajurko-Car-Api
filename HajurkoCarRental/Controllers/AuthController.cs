@@ -43,7 +43,7 @@ namespace HajurkoCarRental.Controllers
                 FullName = model.FullName,
                 UserType = model.UserType,
                 Address = model.Address,
-                Phone = model.Phone,
+                Phone = model.Phone
             };
 
             //hash the password before saving it
