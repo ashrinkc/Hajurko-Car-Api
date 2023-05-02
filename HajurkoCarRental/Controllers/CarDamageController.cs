@@ -1,6 +1,7 @@
 ﻿using HajurkoCarRental.Data;
 using HajurkoCarRental.Dto;
 using HajurkoCarRental.Models;
+using HajurkoCarRental.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,21 +23,29 @@ namespace HajurkoCarRental.Controllers
         {
             //check if the car rental request exists and is approved
             var carRental = await _context.CarRental.FindAsync(damageDto.CarRentalId);
-
             if(carRental == null)
             {
                 return BadRequest("Invalid request id or request not approved");
+            }
+            var car = await _context.Cars.FindAsync(carRental.CarId);
+            var user = await _context.AppUsers.FindAsync(carRental.CustomerId);
+            if(car == null || user == null)
+            {
+                return NotFound();
             }
             var carDamage = new CarDamage
             { 
                 CarRentalId = damageDto.CarRentalId,
                 Description = damageDto.Description,
+                RepairCost = 0,
+                TotalAmountPaid = 0,
                 IsPaid = false
             };
 
             _context.CarDamages.Add(carDamage);
             await _context.SaveChangesAsync();
-
+            var email = new EmailSenderService();
+            await email.SendEmailAsync("ashrinkc3@yopmail.com", "Car Damage", car.Model + "has been damaged by" + user.FullName);
             return Ok("Car damage request successfully created");
         }
 

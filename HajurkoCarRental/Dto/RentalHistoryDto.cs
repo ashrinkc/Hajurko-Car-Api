@@ -8,5 +8,7 @@
         public decimal? RentalFee { get; set; }
         public DateTime? RentalStart { get; set; }
         public DateTime? RentalEnd { get; set; }
+        public string CarModel { get; set; }
+        public string CarBrand { get; set; }
     }
 }

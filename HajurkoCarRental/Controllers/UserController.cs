@@ -119,6 +119,8 @@ namespace HajurkoCarRental.Controllers
                 {
                     UserId = g.Key,
                     FullName = g.First().User.FullName,
+                    Email = g.First().User.Email,
+                    Address = g.First().User.Address,
                     RentalCount = g.Count()
                 }).ToListAsync();
 
@@ -154,7 +156,9 @@ namespace HajurkoCarRental.Controllers
                 .Select(g => new
                 {
                     UserId = g.Key,
-                    FullName = g.First().User.FullName
+                    FullName = g.First().User.FullName,
+                    Email = g.First().User.Email,
+                    Address = g.First().User.Address,
                 }).ToListAsync();
             return Ok(inactiveuser);
         }

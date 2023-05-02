@@ -96,6 +96,29 @@ namespace HajurkoCarRental.Controllers
             return Ok(request);
         }
 
+        //To get users rental request
+        [HttpGet("getrequest/{userId}")]
+        public async Task<IActionResult> GetUsersRequest(int userId)
+        {
+            var request = await _context.CarRentalRequest.Where(r => r.UserId == userId && r.Status == "Pending")
+                .Include(r => r.Car)
+                .Include(r => r.User)
+                .Select(r => new
+                {
+                    Id = r.Id,
+                    StartDate = r.RentalStart,
+                    EndDate = r.RentalEnd,
+                    Status = r.Status,
+                    CarBrand = r.Car.Brand,
+                    CarModel = r.Car.Model,
+                    Charge = r.Charge,
+                    Username = r.User.FullName,
+                    Email = r.User.Email
+                })
+                .ToListAsync();
+            return Ok(request);
+        }
+
         //To accept or reject incoming car rental request
         [HttpPost("request/authorize/{reqId}")]
         public async Task<IActionResult> ValidateRequest(int reqId, [FromBody] ValidateRequestDto model)
@@ -175,8 +198,8 @@ namespace HajurkoCarRental.Controllers
                     CustomerEmail = r.Customer.Email,
                     StartDate = r.RentalDate,
                     EndDate = r.RentalEnd,
-                    Charge = r.Charge,
-                    Id = r.Id
+                    charge = r.Charge,
+                    id = r.Id
                 }).ToListAsync();
 
             return Ok(cars); 
@@ -184,16 +207,23 @@ namespace HajurkoCarRental.Controllers
 
         //Return rented car
         [HttpPost("return/{id}")]
-        public async Task<IActionResult> ReturnCar(int id, [FromBody] DateTime? returnDate)
+        public async Task<IActionResult> ReturnCar(int id)
         {
             var carRental = await _context.CarRental.FindAsync(id);
 
             if(carRental == null)
             {
-                return NotFound();
+                return NotFound("Id not found");
             }
 
-            carRental.RentalEnd = returnDate;
+            var carId = carRental.CarId;
+            var car = await _context.Cars.FindAsync(carId);
+            if (car == null)
+            {
+                return NotFound("Car not found");
+            }
+            car.IsAvailable = true;
+            _context.Cars.Update(car);
             carRental.IsReturned = true;
             _context.CarRental.Update(carRental);
             await _context.SaveChangesAsync();
@@ -212,6 +242,7 @@ namespace HajurkoCarRental.Controllers
             }
 
             carRentalRequest.Cancelled = true;
+            carRentalRequest.Status = "Cancelled";
             _context.CarRentalRequest.Update(carRentalRequest);
             await _context.SaveChangesAsync();
 
@@ -222,16 +253,28 @@ namespace HajurkoCarRental.Controllers
         [HttpGet("rentedCar/{customerId}")]
         public async Task<IActionResult> GetRentedCar(int customerId)
         {
-            var car = await _context.CarRental.Where(r => r.CustomerId == customerId).FirstOrDefaultAsync();
+            var car = await _context.CarRental.Where(r => r.CustomerId == customerId && !r.IsReturned)
+                .Include(r => r.Car)
+                .Select(r => new
+                {
+                    CarModel = r.Car.Model,
+                    CarBrand = r.Car.Brand,
+                    CustomerName = r.Customer.FullName,
+                    CustomerEmail = r.Customer.Email,
+                    StartDate = r.RentalDate,
+                    EndDate = r.RentalEnd,
+                    charge = r.Charge,
+                    id = r.Id
+                }).ToListAsync();
             return Ok(car);
         }
 
         //Get rental history of a user
-        [HttpGet("rentalHistory/{customerId}")]
-        public async Task<IActionResult> GetRentalHistory(int customerId, DateTime? startDate = null, DateTime?  endDate = null) 
+        [HttpGet("rentalHistory")]
+        public async Task<IActionResult> GetRentalHistory(DateTime? startDate = null, DateTime?  endDate = null) 
         {
             var history = await _context.CarRental
-                .Where(r => r.CustomerId == customerId)
+                //.Where(r => r.CustomerId == customerId)
                 .Include(r => r.Car)
                 .Include(r => r.Customer)
                 .Include(r => r.Staff)
@@ -243,6 +286,8 @@ namespace HajurkoCarRental.Controllers
                     RentalFee = r.Charge,
                     RentalStart = r.RentalDate,
                     RentalEnd = r.RentalEnd,
+                    CarModel = r.Car.Model,
+                    CarBrand = r.Car.Brand
                 }).ToListAsync();
 
             if(startDate != null)

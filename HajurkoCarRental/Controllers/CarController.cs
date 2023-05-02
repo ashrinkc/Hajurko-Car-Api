@@ -170,8 +170,9 @@ namespace HajurkoCarRental.Controllers
         public async Task<IActionResult> GetFrequentlyRentedCars()
         {
             var cars = await _context.Cars
+                .Where(c => c.RentCount >= 1)
                 .OrderByDescending(c => c.RentCount)
-                .Take(10)
+                .Take(5)
                 .ToListAsync();
 
             return Ok(cars);

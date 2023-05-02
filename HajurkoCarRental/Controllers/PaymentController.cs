@@ -1,5 +1,7 @@
 ﻿using HajurkoCarRental.Data;
 using HajurkoCarRental.Dto;
+using HajurkoCarRental.Models;
+using HajurkoCarRental.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +23,11 @@ namespace HajurkoCarRental.Controllers
         public async Task<IActionResult> GeneratePayment(int damageId, PaymentDto payment)
         {
             var carDamage = await _context.CarDamages.FindAsync(damageId);
+            if(carDamage == null)
+            {
+                return NotFound();
+            }
+           
             carDamage.RepairCost = payment.RepairCost;
             carDamage.TotalAmountPaid = payment.TotalAmountPaid;
             //var paymentBill = new 
@@ -71,18 +78,18 @@ namespace HajurkoCarRental.Controllers
 
         //Pay due amount
         [HttpPost("payment/{damageId}")]
-        public async Task<IActionResult> amountPayment(int damageId, [FromBody] decimal amount)
+        public async Task<IActionResult> amountPayment(int damageId, [FromBody] PaymentDueDto model)
         {
             var damage = await _context.CarDamages.FindAsync(damageId);
             if (damage.IsPaid == true)
             {
                 return BadRequest("The amount has already been paid");
             }
-            if(amount > damage.RepairCost)
+            if(model.amount > damage.RepairCost)
             {
                 return BadRequest("Higer payment than required");
             }
-            damage.TotalAmountPaid += amount;
+            damage.TotalAmountPaid += model.amount;
             if(damage.TotalAmountPaid == damage.RepairCost)
             {
                 damage.IsPaid = true;
@@ -103,7 +110,8 @@ namespace HajurkoCarRental.Controllers
 
             var result = damages.Select(damage => new
             {
-                CustomerName = damage.CarRental.Customer.FullName,
+                Id = damage.Id,
+                CustomerName = damage.CarRental?.Customer?.FullName,
                 RepairCost = damage.RepairCost,
                 TotalAmountPaid = damage.TotalAmountPaid,
                 UnpaidAmount = damage.RepairCost - damage.TotalAmountPaid
