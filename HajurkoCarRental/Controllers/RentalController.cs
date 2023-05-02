@@ -290,14 +290,14 @@ namespace HajurkoCarRental.Controllers
                     CarBrand = r.Car.Brand
                 }).ToListAsync();
 
-            if(startDate != null)
+            if (startDate != null)
             {
-                history = history.Where(r => r.RentalStart == startDate.Value).ToList();
+                history = history.Where(r => r.RentalStart == startDate).OrderBy(r => r.RentalStart).ToList();
             }
 
-            if(endDate != null)
+            if (endDate != null)
             {
-                history = history.Where(r => r.RentalEnd == endDate).ToList();
+                history = history.Where(r => r.RentalEnd == endDate).OrderBy(r => r.RentalStart).ToList();
             }
             return Ok(history);
         }

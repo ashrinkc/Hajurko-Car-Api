@@ -40,7 +40,9 @@ namespace HajurkoCarRental.Controllers
             //};
             _context.CarDamages.Update(carDamage);
             await _context.SaveChangesAsync();
-            return Ok();
+            var email = new EmailSenderService();
+            await email.SendEmailAsync(payment.email, "Payment bill", "Your total repair bill is " + payment.RepairCost + " You have paid " + payment.TotalAmountPaid);
+            return Ok("Bill sent");
         }
 
         //Get payment bill
@@ -96,6 +98,8 @@ namespace HajurkoCarRental.Controllers
             }
             _context.CarDamages.Update(damage);
             await _context.SaveChangesAsync();
+            var email = new EmailSenderService();
+            await email.SendEmailAsync(model.email, "Payment Confirmation", "You have paid total " + damage.TotalAmountPaid + " from " + damage.RepairCost);
             return Ok();
         }
 
@@ -112,6 +116,7 @@ namespace HajurkoCarRental.Controllers
             {
                 Id = damage.Id,
                 CustomerName = damage.CarRental?.Customer?.FullName,
+                CustomerEmail = damage.CarRental?.Customer?.Email,
                 RepairCost = damage.RepairCost,
                 TotalAmountPaid = damage.TotalAmountPaid,
                 UnpaidAmount = damage.RepairCost - damage.TotalAmountPaid

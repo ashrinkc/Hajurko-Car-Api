@@ -36,9 +36,9 @@ namespace HajurkoCarRental.Controllers
 
         // Change user password
         [HttpPost("changePassword")]
-        public async Task<IActionResult> ChangePassword(int userId,string oldPassword, string newPassword)
+        public async Task<IActionResult> ChangePassword([FromBody] changePasswordDto model)
         {
-            var user = await _context.AppUsers.FindAsync(userId);
+            var user = await _context.AppUsers.FindAsync(model.userId);
             if(user == null)
             {
                 return NotFound();
@@ -46,14 +46,14 @@ namespace HajurkoCarRental.Controllers
 
             //check if the old password matches
             var passwordHasher = new PasswordHasher<AppUser>();
-            var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, oldPassword);
+            var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, model.oldPassword);
             if (result == PasswordVerificationResult.Failed)
             {
                 return BadRequest("Old password is incorrect");
             }
 
             //Hash the new password and save it
-            user.PasswordHash = passwordHasher.HashPassword(user,newPassword);
+            user.PasswordHash = passwordHasher.HashPassword(user,model.newPassword);
             _context.Entry(user).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return Ok("Password changed successfully");
@@ -61,15 +61,21 @@ namespace HajurkoCarRental.Controllers
 
         //Update user
         [HttpPut("updateUser/{userId}")]
-        public async Task<IActionResult> UpdateUser(int userId,UpdateUserDto updatedUser )
+        public async Task<IActionResult> UpdateUser(int userId,[FromBody] UpdateUserDto updatedUser )
         {
             var user = await _context.AppUsers.FindAsync(userId);
+           
 
             if (user == null)
             {
                 return NotFound();
             }
 
+            if (updatedUser.Document != null)
+            {
+               
+                
+            }
             //Update the user with their fields
             //if (user.FullName != null)
             //{
@@ -96,14 +102,35 @@ namespace HajurkoCarRental.Controllers
                user.IsRegular = updatedUser.IsRegular;
             }
 
-            if(updatedUser.Document != null)
-            {
-                user.Document = updatedUser.Document;
-            }
-
+            
             _context.AppUsers.Update(user);
             await _context.SaveChangesAsync();
             return Ok(user);
+        }
+
+        //Update document
+        [HttpPut("updateDocument/{userId}")]
+        public async Task<IActionResult> UpdateDocument(int userId,[FromBody] UpdateUserDto updatedUser)
+        {
+            var user = await _context.AppUsers.FindAsync(userId);
+            if(user == null)
+            {
+                return NotFound();
+            }
+            if(updatedUser.Document == null)
+            {
+                return BadRequest("Document required");
+            }
+            if (updatedUser.Document.Length > 1572864) // 1.5MB in bytes
+            {
+                return BadRequest("File size should not exceed 1.5MB.");
+            }
+
+            user.Document = updatedUser.Document;
+
+            _context.AppUsers.Update(user);
+            await _context.SaveChangesAsync();
+            return Ok("Document added");
         }
 
         //Get customers who have frequently rented cars
